@@ -24,9 +24,10 @@ io.on('connection', (socket) => {
 
     socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app!'));
     socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!'));
-    socket.on('createMessage', (msg) => {
+    socket.on('createMessage', (msg, callback) => {
         console.log('Create Message', msg);
         io.emit('newMessage', generateMessage(msg.from, msg.text));
+        callback();
     });
     socket.on('disconnect', () => {
         console.log('Browser disconnected');
