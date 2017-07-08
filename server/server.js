@@ -20,6 +20,16 @@ app.use(express.static(publicPath));
 // events
 io.on('connection', (socket) => {
     console.log('New browser connection');
+
+    socket.emit('newMessage', {
+        from: 'Sarah Bennet',
+        text: 'Hey, Jenny! This is Sarah',
+        createdAt: new Date().getTime()
+    });
+
+    socket.on('createMessage', (msg) => {
+        console.log('Create Message', msg);
+    });
     socket.on('disconnect', () => {
         console.log('Browser disconnected');
     });
