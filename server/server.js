@@ -6,6 +6,7 @@ const express = require('express');
 const socketIO = require('socket.io');
 const http = require('http');
 const path = require('path');
+const {generateMessage} = require('./utils/message');
 const publicPath = path.join(__dirname, '../public');
 const port = process.env.PORT;
 
@@ -21,23 +22,11 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New browser connection');
 
-    socket.emit('newMessage', {
-        from: 'Admin',
-        text: 'Welcome to the chat app!',
-        createdAt: new Date().getTime()
-    });
-    socket.broadcast.emit('newMessage', {
-        from: 'Admin',
-        text: 'A new user has joined!',
-        createdAt: new Date().getTime()
-    });
+    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app!'));
+    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!'));
     socket.on('createMessage', (msg) => {
         console.log('Create Message', msg);
-        io.emit('newMessage', {
-            from: msg.from,
-            text: msg.text,
-            createdAt: new Date().getTime()
-        });
+        io.emit('newMessage', generateMessage(msg.from, msg.text));
     });
     socket.on('disconnect', () => {
         console.log('Browser disconnected');
