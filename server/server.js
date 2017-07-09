@@ -22,15 +22,15 @@ app.use(express.static(publicPath));
 io.on('connection', (socket) => {
     console.log('New browser connection');
 
-    socket.emit('newMessage', generateMessage('Admin', 'Welcome to the chat app!'));
-    socket.broadcast.emit('newMessage', generateMessage('Admin', 'New user joined!'));
+    socket.emit('newMessage', generateMessage('Chat Bot', 'Welcome to the chat app!'));
+    socket.broadcast.emit('newMessage', generateMessage('Chat Bot', 'New user joined!'));
     socket.on('createMessage', (msg, callback) => {
         console.log('Create Message', msg);
         io.emit('newMessage', generateMessage(msg.from, msg.text));
         callback();
     });
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Admin', coords.latitude, coords.longitude));
+        io.emit('newLocationMessage', generateLocationMessage('Chat Bot', coords.latitude, coords.longitude));
     });
     socket.on('disconnect', () => {
         console.log('Browser disconnected');
