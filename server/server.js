@@ -39,15 +39,20 @@ io.on('connection', (socket) => {
         socket.broadcast.to(params.room).emit('newMessage', generateMessage('Chat Bot', `${params.name} has joined.`));
 
         socket.on('createMessage', (msg, callback) => {
-        console.log('Create Message', msg);
-        io.to(params.room).emit('newMessage', generateMessage(params.name, msg.text));
+            var user = users.getUser(socket.id);
+            if (user && isRealString(msg.text)) {
+                io.to(params.room).emit('newMessage', generateMessage(params.name, msg.text));
+            }
         callback();
     });
         callback();
     });
 
     socket.on('createLocationMessage', (coords) => {
-        io.emit('newLocationMessage', generateLocationMessage('Chat Bot', coords.latitude, coords.longitude));
+        var user = users.getUser(socket.id);
+        if (user) {
+            io.to(user.room).emit('newLocationMessage', generateLocationMessage(user.name, coords.latitude, coords.longitude));
+        }
     });
 
     socket.on('disconnect', () => {
